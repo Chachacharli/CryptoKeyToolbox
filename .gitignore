@@ -1,0 +1,62 @@
+## Build Artifacts
+bin/
+obj/
+out/
+.vs/
+
+## User-specific files
+*.user
+*.userosscache
+*.suo
+*.sln.docstates
+*.vscode/
+*.vs/
+*.idea/
+
+## Logs
+*.log
+
+## .NET Generated Files
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+## MAUI specific
+**/Resources/Raw/*
+**/Resources/AppIcon/appicon.svg
+**/Resources/AppIcon/*.png
+**/Platforms/Android/*.keystore
+**/Platforms/Android/*-Signed.aab
+**/Platforms/Android/*-Signed.apk
+
+## Cache
+.nuget/
+.npm/
+node_modules/
+
+## Publish outputs
+publish/
+wwwroot/dist/
+
+## macOS
+.DS_Store
+*.dmg
+*.pkg
+
+## Windows
+Thumbs.db
+*.exe
+*.dll
+*.pdb
+
+## JetBrains Rider
+.idea/
+*.iml
+
+## Visual Studio for Mac
+*.pidb
+*.userprefs
+
+## Others
+*.bak
+*.tmp
