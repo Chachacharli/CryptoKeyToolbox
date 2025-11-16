@@ -8,18 +8,15 @@
 
 @* Needed for snackbars *@
 <MudSnackbarProvider />
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
+<!-- APP BAR -->
+<MudAppBar Elevation="1" Fixed="true">
+	<NavMenu></NavMenu>
 
-    <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
-        </div>
+</MudAppBar>
 
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
-</div>
+<!-- CONTENIDO PRINCIPAL -->
+<MudMainContent Class="p-4 mt-16">
+    <MudContainer MaxWidth="MaxWidth.Large" Class="py-4">
+        @Body
+    </MudContainer>
+</MudMainContent>
