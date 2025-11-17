@@ -1,5 +1,64 @@
 ﻿@page "/"
 
-<h1>Hello, world!</h1>
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-8">
 
-Welcome to your new app.
+    <!-- Título principal -->
+    <MudText Typo="Typo.h3" Class="mb-4 font-weight-bold">
+        Key Encryptor Generator
+    </MudText>
+
+    <!-- Descripción / propósito -->
+    <MudPaper Elevation="4" Class="pa-4 mb-6">
+        <MudText Typo="Typo.h5" Class="mb-2">Propósito del Proyecto</MudText>
+        <MudText Typo="Typo.body1">
+            Este proyecto permite administrar claves SSH y RSA, generar nuevas claves,
+            exportarlas, y centralizar su gestión de manera segura y eficiente.
+            También servirá como base para futuras herramientas internas.
+        </MudText>
+    </MudPaper>
+
+    <!-- Quick Launch -->
+    <MudText Typo="Typo.h5" Class="mb-3">Quick Launch</MudText>
+
+    <MudGrid>
+
+        <MudItem xs="12" sm="6" md="4">
+            <MudCard Class="hover-scale" Style="cursor:pointer;" @onclick="NavigateHome">
+                <MudCardContent>
+                    <MudText Typo="Typo.h6">Gestor de Claves</MudText>
+                    <MudText Typo="Typo.body2">Administrar claves SSH y RSA</MudText>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+
+        <MudItem xs="12" sm="6" md="4">
+            <MudCard Class="hover-scale" Style="cursor:pointer;" @onclick="NavigateHome">
+                <MudCardContent>
+                    <MudText Typo="Typo.h6">Generar Llaves</MudText>
+                    <MudText Typo="Typo.body2">Crear nuevas claves para proyectos</MudText>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+
+        <MudItem xs="12" sm="6" md="4">
+            <MudCard Class="hover-scale" Style="cursor:pointer;" @onclick="NavigateHome">
+                <MudCardContent>
+                    <MudText Typo="Typo.h6">Configuración</MudText>
+                    <MudText Typo="Typo.body2">Preferencias y ajustes del sistema</MudText>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+
+    </MudGrid>
+
+</MudContainer>
+
+@code {
+    private void NavigateHome()
+    {
+        Navigation.NavigateTo("/");
+    }
+
+    [Inject]
+    NavigationManager Navigation { get; set; }
+}
