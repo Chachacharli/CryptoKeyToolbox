@@ -1,0 +1,86 @@
+﻿@page "/ssh"
+@using CryptoKeyToolbox.Domain.Entities
+@using CryptoKeyToolbox.Domain.Interfaces
+@using MudBlazor
+@inject ISSHKeyService SSHKeyService
+
+<MudPaper Class="pa-4" Elevation="4">
+	<MudText Typo="Typo.h5">SSH Key Generator</MudText>
+
+	<MudGrid>
+		<MudItem xs="12" sm="6">
+			<MudSelect Label="Type" @bind-Value="_type" Variant="Variant.Filled">
+				@foreach (var state in _types)
+				{
+					<MudSelectItem Value="state">@state</MudSelectItem>
+				}
+			</MudSelect>
+		</MudItem>
+
+		<MudItem xs="12" sm="6">
+			<MudSelect Label="Bits" @bind-Value="_bits" Variant="Variant.Filled">
+				@foreach (var state in _states)
+				{
+					<MudSelectItem Value="state">@state</MudSelectItem>
+				}
+			</MudSelect>
+		</MudItem>
+
+		<MudItem xs="12" sm="6">
+			<MudGrid>
+				<MudItem xs="12" sm="12">
+					<MudToggleGroup T="int" SelectionMode="SelectionMode.SingleSelection" @bind-Value="_count" Color="Color.Primary" FixedContent>
+						<MudToggleItem Value="1" Text="1" />
+						<MudToggleItem Value="2" Text="2" />
+						<MudToggleItem Value="5" Text="5" />
+						<MudToggleItem Value="10" Text="10" />
+					</MudToggleGroup>
+				</MudItem>
+				<MudItem xs="12" sm="12">
+					<MudNumericField @bind-Value="_count" Label="Filled" Variant="Variant.Filled" Min="1" />
+				</MudItem>
+			</MudGrid>
+		</MudItem>
+	</MudGrid>
+
+	<MudButton Class="mt-2" Variant="Variant.Filled" Color="Color.Primary" OnClick="Generate">
+		Generate SSH Keys
+	</MudButton>
+
+</MudPaper>
+@if (_result != null)
+{
+	<MudPaper Class="pa-4" Elevation="4">
+		@foreach (SSHKeyPair pairKey in _result)
+		{
+			<MudText Typo="Typo.h6" Class="mt-4 mb-2">Public Key</MudText>
+			<MudTextField Value="@pairKey.PublicKey"
+						  Lines="5"
+						  ReadOnly="true"
+						  Variant="Variant.Outlined" />
+
+			<MudText Typo="Typo.h6" Class="mt-4 mb-2">Private Key</MudText>
+			<MudTextField Value="@pairKey.PrivateKey"
+						  Lines="10"
+						  ReadOnly="true"
+						  Variant="Variant.Outlined" />
+		}
+	</MudPaper>
+}
+
+@code {
+	private int _bits = 2048;
+	private string _type = "RSA";
+	private int _count = 1;
+
+	private readonly int[] _states = [2048, 3072, 4096];
+	private readonly string[] _types = ["RSA", "ED25519"];
+
+
+	private List<SSHKeyPair> _result;
+
+	private void Generate()
+	{
+		_result = SSHKeyService.GenerateKeys(_bits, _count);
+	}
+}

@@ -9,7 +9,7 @@ namespace CryptoKeyToolbox.Domain.Interfaces
 {
     public interface ISSHKeyService
     {
-        SSHKeyPair GenerateKey(int bits = 2048);
+        List<SSHKeyPair> GenerateKeys(int bits = 2048, int count = 1);
 
     }
 }

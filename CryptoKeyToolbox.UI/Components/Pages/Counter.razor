@@ -12,9 +12,6 @@
                   Type="number"
                   Variant="Variant.Outlined" />
 
-    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Generate">
-        Generate SSH Keys
-    </MudButton>
 
     @if (_result != null)
     {
@@ -37,8 +34,4 @@
 
     private SSHKeyPair _result;
 
-    private void Generate()
-    {
-        _result = SSHKeyService.GenerateKey(_bits);
-    }
 }
