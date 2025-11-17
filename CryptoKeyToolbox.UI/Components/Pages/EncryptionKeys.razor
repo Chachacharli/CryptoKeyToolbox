@@ -1,7 +1,89 @@
 ﻿@page "/encryption-keys"
+@using CryptoKeyToolbox.Domain.Entities
+@using CryptoKeyToolbox.Domain.Interfaces
+@using MudBlazor
 
-<h3>EncryptionKeys</h3>
+<MudPaper Class="pa-4" Elevation="4">
+	<MudText Typo="Typo.h5">Encryption Key Generator</MudText>
+
+	<MudGrid>
+		<!-- ALGORITHM -->
+		<MudItem xs="12" sm="6">
+			<MudSelect T="AlgoritmType"
+					   Label="Algorithm"
+					   Variant="Variant.Filled"
+					   @bind-Value="_algoritmType">
+
+				@foreach (var item in Enum.GetValues(typeof(AlgoritmType)).Cast<AlgoritmType>())
+				{
+					<MudSelectItem Value="@item">@item.ToString()</MudSelectItem>
+				}
+			</MudSelect>
+		</MudItem>
+
+		<!-- KEY SIZE -->
+		<MudItem xs="12" sm="6">
+			<MudSelect T="int"
+					   Label="Key size"
+					   Variant="Variant.Filled"
+					   @bind-Value="_keySize">
+
+				@foreach (var size in _states)
+				{
+					<MudSelectItem Value="@size">@size</MudSelectItem>
+				}
+			</MudSelect>
+		</MudItem>
+
+		<!-- FORMAT -->
+		<MudItem xs="12" sm="6">
+			<MudSelect T="FormatType"
+					   Label="Format"
+					   Variant="Variant.Filled"
+					   @bind-Value="_formatType">
+
+				@foreach (var fmt in Enum.GetValues(typeof(FormatType)).Cast<FormatType>())
+				{
+					<MudSelectItem Value="@fmt">@fmt</MudSelectItem>
+				}
+			</MudSelect>
+		</MudItem>
+
+		<!-- COUNT -->
+		<MudItem xs="12" sm="6">
+			<MudGrid>
+				<MudItem xs="12">
+					<MudToggleGroup T="int"
+									SelectionMode="SelectionMode.SingleSelection"
+									@bind-Value="_count"
+									Color="Color.Primary"
+									FixedContent>
+
+						<MudToggleItem Value="1" Text="1" />
+						<MudToggleItem Value="2" Text="2" />
+						<MudToggleItem Value="5" Text="5" />
+						<MudToggleItem Value="10" Text="10" />
+
+					</MudToggleGroup>
+				</MudItem>
+
+				<MudItem xs="12">
+					<MudNumericField @bind-Value="_count"
+									 Label="Quantity"
+									 Variant="Variant.Filled"
+									 Min="1" />
+				</MudItem>
+			</MudGrid>
+		</MudItem>
+	</MudGrid>
+</MudPaper>
 
 @code {
+	private int _count = 1;
+	private int _keySize = 128;
 
+	private AlgoritmType _algoritmType;
+	private FormatType _formatType;
+
+	private readonly int[] _states = { 128, 192, 256 };
 }
