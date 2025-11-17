@@ -10,31 +10,29 @@ namespace CryptoKeyToolbox.App.Services
 {
 	public class SSHKeyService : ISSHKeyService
 	{
-		public List<SSHKeyPair> GenerateKeys(int bits = 2048, int count = 1)
+		public Task<List<SSHKeyPair>> GenerateKeys(int bits = 2048, int count = 1)
 		{
-			var keyPairs = new List<SSHKeyPair>();
-
-			for (int i = 0; i < count; i++)
+			return Task.Run(() =>
 			{
-				using var rsa = RSA.Create(bits);
+				var keyPairs = new List<SSHKeyPair>();
 
-				var privateKey = Convert.ToBase64String(rsa.ExportPkcs8PrivateKey());
-				var publicKeyBytes = rsa.ExportSubjectPublicKeyInfo();
-				var publicKey = Convert.ToBase64String(publicKeyBytes);
-
-				keyPairs.Add(new SSHKeyPair
+				for (int i = 0; i < count; i++)
 				{
-					PrivateKey = privateKey,
-					PublicKey = publicKey,
-				});
-			}
+					using var rsa = RSA.Create(bits);
 
-			return keyPairs;
-		}
+					var privateKey = Convert.ToBase64String(rsa.ExportPkcs8PrivateKey());
+					var publicKeyBytes = rsa.ExportSubjectPublicKeyInfo();
+					var publicKey = Convert.ToBase64String(publicKeyBytes);
 
-		public SSHKeyPair GenerateKey(int bits = 2048)
-		{
-			return GenerateKeys(bits, 1).First();
+					keyPairs.Add(new SSHKeyPair
+					{
+						PrivateKey = privateKey,
+						PublicKey = publicKey,
+					});
+				}
+
+				return keyPairs;
+			});
 		}
 
 		public SSHKeyPair[] GenerateKey(int bits = 2048, int count = 1)
