@@ -3,103 +3,126 @@
 @using CryptoKeyToolbox.Domain.Interfaces
 @using MudBlazor
 @inject ISSHKeyService SSHKeyService
+@inject ISnackbar Snackbar
+@inject IJSRuntime JS
 
 <MudPaper Class="pa-4" Elevation="4">
-	<MudText Typo="Typo.h5">SSH Key Generator</MudText>
+    <MudText Typo="Typo.h5">SSH Key Generator</MudText>
 
-	<MudGrid>
-		<MudItem xs="12" sm="6">
-			<MudSelect Label="Type" @bind-Value="_type" Variant="Variant.Filled">
-				@foreach (var state in _types)
-				{
-					<MudSelectItem Value="state">@state</MudSelectItem>
-				}
-			</MudSelect>
-		</MudItem>
+    <MudGrid>
+        <MudItem xs="12" sm="6">
+            <MudSelect Label="Type" @bind-Value="_type" Variant="Variant.Filled">
+                @foreach (var state in _types)
+                {
+                    <MudSelectItem Value="state">@state</MudSelectItem>
+                }
+            </MudSelect>
+        </MudItem>
 
-		<MudItem xs="12" sm="6">
-			<MudSelect Label="Bits" @bind-Value="_bits" Variant="Variant.Filled">
-				@foreach (var state in _states)
-				{
-					<MudSelectItem Value="state">@state</MudSelectItem>
-				}
-			</MudSelect>
-		</MudItem>
+        <MudItem xs="12" sm="6">
+            <MudSelect Label="Bits" @bind-Value="_bits" Variant="Variant.Filled">
+                @foreach (var state in _states)
+                {
+                    <MudSelectItem Value="state">@state</MudSelectItem>
+                }
+            </MudSelect>
+        </MudItem>
 
-		<MudItem xs="12" sm="6">
-			<MudGrid>
-				<MudItem xs="12" sm="12">
-					<MudToggleGroup T="int" SelectionMode="SelectionMode.SingleSelection" @bind-Value="_count" Color="Color.Primary" FixedContent>
-						<MudToggleItem Value="1" Text="1" />
-						<MudToggleItem Value="2" Text="2" />
-						<MudToggleItem Value="5" Text="5" />
-						<MudToggleItem Value="10" Text="10" />
-					</MudToggleGroup>
-				</MudItem>
-				<MudItem xs="12" sm="12">
-					<MudNumericField @bind-Value="_count" Label="Quantity" Variant="Variant.Filled" Min="1" />
-				</MudItem>
-			</MudGrid>
-		</MudItem>
-	</MudGrid>
+        <MudItem xs="12" sm="6">
+            <MudGrid>
+                <MudItem xs="12" sm="12">
+                    <MudToggleGroup T="int" SelectionMode="SelectionMode.SingleSelection" @bind-Value="_count" Color="Color.Primary" FixedContent>
+                        <MudToggleItem Value="1" Text="1" />
+                        <MudToggleItem Value="2" Text="2" />
+                        <MudToggleItem Value="5" Text="5" />
+                        <MudToggleItem Value="10" Text="10" />
+                    </MudToggleGroup>
+                </MudItem>
+                <MudItem xs="12" sm="12">
+                    <MudNumericField @bind-Value="_count" Label="Quantity" Variant="Variant.Filled" Min="1" />
+                </MudItem>
+            </MudGrid>
+        </MudItem>
+    </MudGrid>
 
-	<MudButton Class="mt-2" Variant="Variant.Filled" Color="Color.Primary" Disabled="_isLoading" OnClick="Generate">
-		Generate SSH Keys
-	</MudButton>
+    <MudButton Class="mt-2" Variant="Variant.Filled" Color="Color.Primary" Disabled="_isLoading" OnClick="Generate">
+        Generate SSH Keys
+    </MudButton>
 
+    @if (_isLoading)
+    {
+        <div class="d-flex justify-center mt-4 mb-4">
+            <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true" />
+        </div>
+    }
 </MudPaper>
-
-@if (_isLoading)
-{
-	<MudPaper Class="pa-4 mt-4" Elevation="4">
-		<div class="d-flex justify-center mt-4 mb-4">
-			<MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true" />
-		</div>
-	</MudPaper>
-}
 
 @if (_result != null && !_isLoading)
 {
-	<MudPaper Class="pa-4 mt-4" Elevation="4">
-		@foreach (SSHKeyPair pairKey in _result)
-		{
-			<MudText Typo="Typo.h6" Class="mt-4 mb-2">Public Key</MudText>
-			<MudTextField Value="@pairKey.PublicKey"
-						  Lines="5"
-						  ReadOnly="true"
-						  Variant="Variant.Outlined" />
+    <MudPaper Class="pa-4 mt-4" Elevation="4">
+        @foreach (SSHKeyPair pairKey in _result)
+        {
+            <!-- PUBLIC KEY -->
+            <MudText Typo="Typo.h6" Class="mt-4 mb-2">Public Key</MudText>
+            <MudTextField Value="@pairKey.PublicKey"
+                          Lines="5"
+                          ReadOnly="true"
+                          Variant="Variant.Outlined" />
 
-			<MudText Typo="Typo.h6" Class="mt-4 mb-2">Private Key</MudText>
-			<MudTextField Value="@pairKey.PrivateKey"
-						  Lines="10"
-						  ReadOnly="true"
-						  Variant="Variant.Outlined" />
-		}
-	</MudPaper>
+            <div class="d-flex justify-end mt-1">
+                <MudTooltip Text="Copy public key">
+                    <MudIconButton Icon="@Icons.Material.Filled.CopyAll"
+                                   Color="Color.Primary"
+                                   OnClick="@(()=>CopyToClipboard(pairKey.PublicKey))" />
+                </MudTooltip>
+            </div>
+
+            <!-- PRIVATE KEY -->
+            <MudText Typo="Typo.h6" Class="mt-4 mb-2">Private Key</MudText>
+            <MudTextField Value="@pairKey.PrivateKey"
+                          Lines="10"
+                          ReadOnly="true"
+                          Variant="Variant.Outlined" />
+
+            <div class="d-flex justify-end mt-1">
+                <MudTooltip Text="Copy private key">
+                    <MudIconButton Icon="@Icons.Material.Filled.CopyAll"
+                                   Color="Color.Primary"
+                                   OnClick="@(()=>CopyToClipboard(pairKey.PrivateKey))" />
+                </MudTooltip>
+            </div>
+        }
+    </MudPaper>
 }
 
 @code {
-	private bool _isLoading = false;
-	private int _bits = 2048;
-	private string _type = "RSA";
-	private int _count = 1;
+    private bool _isLoading = false;
+    private int _bits = 2048;
+    private string _type = "RSA";
+    private int _count = 1;
 
-	private readonly int[] _states = { 2048, 3072, 4096 };
-	private readonly string[] _types = { "RSA", "ED25519" };
+    private readonly int[] _states = { 2048, 3072, 4096 };
+    private readonly string[] _types = { "RSA", "ED25519" };
 
-	private List<SSHKeyPair> _result;
+    private List<SSHKeyPair> _result;
 
-	private async Task Generate()
-	{
-		_isLoading = true;
-		_result = null;
+    private async Task Generate()
+    {
+        _isLoading = true;
+        _result = null;
 
-		var generationTask = SSHKeyService.GenerateKeys(_bits, _count);
-		var minDelayTask = Task.Delay(1000);
+        var generationTask = SSHKeyService.GenerateKeys(_bits, _count);
+        var minDelayTask = Task.Delay(1000);
 
-		await Task.WhenAll(generationTask, minDelayTask);
+        await Task.WhenAll(generationTask, minDelayTask);
 
-		_result = generationTask.Result;
-		_isLoading = false;
-	}
+        _result = generationTask.Result;
+        _isLoading = false;
+    }
+
+    private async Task CopyToClipboard(string text)
+    {
+        await JS.InvokeVoidAsync("navigator.clipboard.writeText", text);
+        Snackbar.Add("Copied to clipboard!", Severity.Success);
+    }
 }
