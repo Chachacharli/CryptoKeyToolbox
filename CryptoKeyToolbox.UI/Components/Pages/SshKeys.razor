@@ -11,13 +11,15 @@
 
     <MudGrid>
         <MudItem xs="12" sm="6">
-            <MudSelect Label="Type" @bind-Value="_type" Variant="Variant.Filled">
-                @foreach (var state in _types)
+            <MudSelect T="SshKeyType" Label="Type" @bind-Value="_type" Variant="Variant.Filled">
+                @foreach (var state in Enum.GetValues(typeof(SshKeyType)).Cast<SshKeyType>())
                 {
-                    <MudSelectItem Value="state">@state</MudSelectItem>
+                    var item = state;
+                    <MudSelectItem Value="item">@item.ToString()</MudSelectItem>
                 }
             </MudSelect>
         </MudItem>
+
 
         <MudItem xs="12" sm="6">
             <MudSelect Label="Bits" @bind-Value="_bits" Variant="Variant.Filled">
@@ -97,12 +99,11 @@
 
 @code {
     private bool _isLoading = false;
+    private SshKeyType _type = SshKeyType.RSA;
     private int _bits = 2048;
-    private string _type = "RSA";
     private int _count = 1;
 
     private readonly int[] _states = { 2048, 3072, 4096 };
-    private readonly string[] _types = { "RSA", "ED25519" };
 
     private List<SSHKeyPair> _result;
 
@@ -111,7 +112,7 @@
         _isLoading = true;
         _result = null;
 
-        var generationTask = SSHKeyService.GenerateKeys(_bits, _count);
+        var generationTask = SSHKeyService.GenerateKeys(_bits, _count, _type);
         var minDelayTask = Task.Delay(1000);
 
         await Task.WhenAll(generationTask, minDelayTask);
@@ -119,6 +120,7 @@
         _result = generationTask.Result;
         _isLoading = false;
     }
+
 
     private async Task CopyToClipboard(string text)
     {

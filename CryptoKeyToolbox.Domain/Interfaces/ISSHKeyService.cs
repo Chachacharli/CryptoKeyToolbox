@@ -7,9 +7,14 @@ using System.Threading.Tasks;
 
 namespace CryptoKeyToolbox.Domain.Interfaces
 {
+    public enum SshKeyType
+    {
+        RSA,
+        ED25519
+    }
     public interface ISSHKeyService
     {
-        Task<List<SSHKeyPair>> GenerateKeys(int bits = 2048, int count = 1);
+        Task<List<SSHKeyPair>> GenerateKeys(int bits = 2048, int count = 1, SshKeyType type = SshKeyType.RSA);
 
     }
 }
