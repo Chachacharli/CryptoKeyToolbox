@@ -9,6 +9,7 @@ namespace CryptoKeyToolbox.Infrastructure.Infra
 		public static IServiceCollection AddCryptoKeyToolboxServices(this IServiceCollection services)
 		{
 			services.AddScoped<ISSHKeyService, SSHKeyService>();
+			services.AddScoped<IEncryptionKey, EncryptionKeyService>();
 
 			return services;
 		}

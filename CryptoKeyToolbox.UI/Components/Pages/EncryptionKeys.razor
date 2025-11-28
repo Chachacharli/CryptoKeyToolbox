@@ -2,6 +2,9 @@
 @using CryptoKeyToolbox.Domain.Entities
 @using CryptoKeyToolbox.Domain.Interfaces
 @using MudBlazor
+@inject IJSRuntime JS
+@inject IEncryptionKey EncryptionKeyService
+@inject ISnackbar Snackbar
 
 <MudPaper Class="pa-4" Elevation="4">
 	<MudText Typo="Typo.h5">Encryption Key Generator</MudText>
@@ -75,8 +78,54 @@
 				</MudItem>
 			</MudGrid>
 		</MudItem>
+		<MudItem xs="12" md="6">
+			<MudButton Class="mt-2"
+					   Variant="Variant.Filled"
+					   Color="Color.Primary"
+					   Disabled="_isLoading"
+					   OnClick="Generate">
+				Generate
+			</MudButton>
+		</MudItem>
 	</MudGrid>
+	@if (_isLoading)
+	{
+		<div class="d-flex justify-center mt-4 mb-4">
+			<MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true" />
+		</div>
+	}
 </MudPaper>
+
+@if (_result != null && !_isLoading)
+{
+	<MudPaper Class="pa-4 mt-4" Elevation="4">
+		<MudText Typo="Typo.h6">Generated Keys</MudText>
+
+		<MudGrid Class="mt-2">
+			@foreach (var key in _result)
+			{
+				<MudItem xs="12" md="6">
+					<MudTextField Label="@($"{key.Algorithm} - {key.Format} ({key.KeySize} bits)")"
+								  Value="@key.Key"
+								  ReadOnly="true"
+								  Lines="3"
+								  Variant="Variant.Filled" />
+
+					<div class="d-flex justify-end mt-1">
+						<MudTooltip Text="Copy private key">
+							<MudIconButton Icon="@Icons.Material.Filled.CopyAll"
+										   Color="Color.Primary"
+										   OnClick="@(() => CopyToClipboard(key.Key))" />
+						</MudTooltip>
+					</div>
+
+				</MudItem>
+			}
+		</MudGrid>
+	</MudPaper>
+}
+
+
 
 @code {
 	private int _count = 1;
@@ -84,6 +133,27 @@
 
 	private AlgoritmType _algoritmType;
 	private FormatType _formatType;
+	private bool _isLoading = false;
 
 	private readonly int[] _states = { 128, 192, 256 };
+
+	private List<EncryptionKey>? _result;
+
+	private async Task Generate()
+	{
+		_isLoading = true;
+		var generationTask = EncryptionKeyService.GenerateKeys(_algoritmType, _formatType, _keySize, _count);
+		var minDelayTask = Task.Delay(1000);
+
+		await Task.WhenAll(generationTask, minDelayTask);
+
+		_result = generationTask.Result;
+		_isLoading = false;
+	}
+
+	private async Task CopyToClipboard(string text)
+	{
+		await JS.InvokeVoidAsync("navigator.clipboard.writeText", text);
+		Snackbar.Add("Copied to clipboard!", Severity.Success);
+	}
 }

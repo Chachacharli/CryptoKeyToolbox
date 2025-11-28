@@ -4,11 +4,11 @@ namespace CryptoKeyToolbox.Domain.Entities
 {
 	public class EncryptionKey
 	{
-		string Key { get; set; }
-		AlgoritmType Algorithm { get; set; }
-		FormatType Format { get; set; }
-		int KeySize { get; set; }
-		int Count { get; set; }
+		public string Key { get; set; }
+		public AlgoritmType Algorithm { get; set; }
+		public FormatType Format { get; set; }
+		public int KeySize { get; set; }
+		public int Count { get; set; }
 
 	}
 }

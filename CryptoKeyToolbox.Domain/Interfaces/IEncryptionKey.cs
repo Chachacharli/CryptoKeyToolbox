@@ -16,7 +16,8 @@ namespace CryptoKeyToolbox.Domain.Interfaces
 		Hex,
 		Base64,
 		Binary,
-		PEM
+		PEM,
+		DER
 	}
 
 	public interface IEncryptionKey
